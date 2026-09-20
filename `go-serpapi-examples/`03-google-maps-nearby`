@@ -1,1 +1,66 @@
 go-serpapi-examples/03-google-maps-nearby/main.go`
+
+
+Código Bash 
+
+go run main.go -q "restaurant" -l "@-8.838333,13.234444,14z"
+go run main.go -q "gym" -l "@-8.838333,13.234444,14z"
+
+Código main . go :
+
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"os"
+
+	g "github.com/serpapi/google-search-results-golang"
+)
+
+func main() {
+	apiKey := os.Getenv("SERPAPI_KEY")
+	if apiKey == "" {
+		log.Fatal("SERPAPI_KEY not set")
+	}
+
+	query := flag.String("q", "coffee shop", "What to search for")
+	location := flag.String("l", "@-8.838333,13.234444,14z", "Lat Long + Zoom - Luanda Example")
+	flag.Parse()
+
+	fmt.Printf("Searching '%s' near %s...\n\n", *query, *location)
+
+	params := map[string]string{
+		"engine": "google_maps",
+		"q": *query,
+		"ll": *location,
+		"type": "search",
+	}
+
+	search := g.NewGoogleSearch(params, apiKey)
+	results, err := search.GetGoogleMaps()
+	if err!= nil {
+		log.Fatalf("Failed: %v", err)
+	}
+
+	places, ok := results["local_results"].([]interface{})
+	if!ok || len(places) == 0 {
+		fmt.Println("No places found")
+		return
+	}
+
+	fmt.Printf("Found %d places:\n", len(places))
+	fmt.Println("-----------------------------------")
+
+	for i, p := range places {
+		if i >= 5 {
+			break
+		}
+		pm := p.(map[string]interface{})
+		fmt.Printf("%d. %v\n", i+1, pm["title"])
+		fmt.Printf(" Address: %v | Rating: %v (%v reviews)\n", pm["address"], pm["rating"], pm["reviews"])
+		fmt.Printf(" Type: %v\n\n", pm["type"])
+	}
+	fmt.Println("Done. Built with Go + SerpApi | Async Writer")
+}
