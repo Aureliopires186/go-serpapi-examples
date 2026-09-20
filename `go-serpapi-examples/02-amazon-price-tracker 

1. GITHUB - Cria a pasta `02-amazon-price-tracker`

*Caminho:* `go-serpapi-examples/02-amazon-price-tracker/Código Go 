@@ -1,0 +1,62 @@
+
+
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"os"
+
+	g "github.com/serpapi/google-search-results-golang"
+)
+
+func main() {
+	apiKey := os.Getenv("SERPAPI_KEY")
+	if apiKey == "" {
+		log.Fatal("SERPAPI_KEY env var not set")
+	}
+
+	product := flag.String("q", "MacBook Pro M3", "Product to search on Amazon")
+	flag.Parse()
+
+	fmt.Printf("Tracking Amazon price for '%s'...\n\n", *product)
+
+	parameter := map[string]string{
+		"engine": "amazon",
+		"k": *product, // Amazon search keyword
+		"amazon_domain": "amazon.com",
+	}
+
+	search := g.NewGoogleSearch(parameter, apiKey)
+	results, err := search.GetAmazon()
+	if err!= nil {
+		log.Fatalf("Failed to fetch Amazon data: %v", err)
+	}
+
+	// Parse organic results
+	products, ok := results["search_results"].([]interface{})
+	if!ok || len(products) == 0 {
+		fmt.Println("No products found.")
+		return
+	}
+
+	fmt.Printf("Found %d products:\n", len(products))
+	fmt.Println("-----------------------------------")
+
+	for i, p := range products {
+		if i >= 5 { // show top 5 only
+			break
+		}
+		pMap := p.(map[string]interface{})
+		title := pMap["title"]
+		price := pMap["price"]
+		rating := pMap["rating"]
+		link := pMap["link"]
+
+		fmt.Printf("%d. %v\n", i+1, title)
+		fmt.Printf(" Price: %v | Rating: %v\n", price, rating)
+		fmt.Printf(" Link: %v\n\n", link)
+	}
+	fmt.Println("Done. Built with Go + SerpApi | Async Writer")
+}
