@@ -1,0 +1,26 @@
+
+
+# Go SerpApi Examples - Production Ready
+
+Real-world, production-ready examples of how to use SerpApi with Golang.
+
+Built by a Go Developer from Luanda, Angola 🇦🇴 | 100% async, written-first.
+
+### 🚀 Examples
+
+| # | Example | SerpApi Engine | Blog Post | Code |
+|---|---|---|---|---|
+| 01 | Google Jobs Real-Time Search | `google_jobs` | [Read Tutorial](https://blogspotangola.blogspot.com/2026/09/how-to-search-google-jobs-in-real-time.html) | [Code](./01-google-jobs) |
+| 02 | Amazon Price Tracker | `amazon` | [Read Tutorial](https://blogspotangola.blogspot.com/2026/09/how-to-track-amazon-prices-with-go-and-serpapi.html) | [Code](./02-amazon-price-tracker) |
+| 03 | Google Maps Nearby Places (Coming Soon) | `google_maps` | Coming | Coming |
+
+### Why this repo?
+
+- No web scraping. No CAPTCHAs.
+- Clean JSON from SerpApi.
+- Copy, paste, run.
+
+```bash
+export SERPAPI_KEY="your_key"
+go run ./01-google-jobs -q "golang developer" -l "remote"
+go run ./02-amazon-price-tracker -q "MacBook Pro"
