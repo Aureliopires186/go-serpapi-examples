@@ -1,0 +1,5 @@
+
+
+export SERPAPI_KEY=sua_key_aqui
+go mod tidy
+go run main.go -q "Golang Developer" -location "Remote"
