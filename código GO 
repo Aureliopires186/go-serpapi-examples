@@ -1,0 +1,84 @@
+Código GO 
+
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"os"
+
+	g "github.com/serpapi/google-search-results-golang"
+)
+
+func main() {
+	// --- Config ---
+	// Best practice: never hardcode API key. Use env var.
+	apiKey := os.Getenv("SERPAPI_KEY")
+	if apiKey == "" {
+		log.Fatal("SERPAPI_KEY env var not set. Get one at https://serpapi.com/manage-api-key")
+	}
+
+	// Allow CLI flags for flexibility - this is what a Dev Advocate does
+	query := flag.String("q", "Golang Developer", "Job query")
+	location := flag.String("location", "Luanda, Angola", "Job location")
+	flag.Parse()
+
+	fmt.Printf("Searching Google Jobs for '%s' in '%s'...\n\n", *query, *location)
+
+	// --- SerpApi Parameters ---
+	// See docs: https://serpapi.com/search-api
+	parameter := map[string]string{
+		"engine": "google_jobs",
+		"q": *query,
+		"location": *location,
+		"hl": "en", // language
+		"chips": "employment_type:CONTRACTOR", // filter: CONTRACTOR, FULLTIME, PARTTIME
+	}
+
+	search := g.NewGoogleSearch(parameter, apiKey)
+
+	// GetJobs() is the helper for this engine. It returns a map.
+	results, err := search.GetJobs()
+	if err!= nil {
+		log.Fatalf("Failed to fetch jobs: %v", err)
+	}
+
+	// --- Parse Results ---
+	// The API returns jobs_results as []interface{}
+	jobs, ok := results["jobs_results"].([]interface{})
+	if!ok || len(jobs) == 0 {
+		fmt.Println("No jobs found. Try a different query or location.")
+		return
+	}
+
+	fmt.Printf("Found %d jobs:\n", len(jobs))
+	fmt.Println("-----------------------------------")
+
+	for i, j := range jobs {
+		jobMap, ok := j.(map[string]interface{})
+		if!ok {
+			continue
+		}
+
+		title := jobMap["title"]
+		company := jobMap["company_name"]
+		loc := jobMap["location"]
+		via := jobMap["via"]
+
+		// Safe printing
+		fmt.Printf("%d. %v @ %v\n", i+1, title, company)
+		fmt.Printf(" Location: %v | Via: %v\n", loc, via)
+
+		// Optional: show description snippet
+		if desc, exists := jobMap["description"]; exists {
+			if descStr, ok := desc.(string); ok && len(descStr) > 120 {
+				fmt.Printf(" %s...\n", descStr[:120])
+			}
+		}
+		fmt.Println()
+	}
+
+	fmt.Println("-----------------------------------")
+	fmt.Println("Done. Built with Go + SerpApi | Async Writer")
+}
