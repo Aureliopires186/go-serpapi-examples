@@ -1,0 +1,8 @@
+Run and example:
+
+Código Bash 
+
+
+   cd 01-google-jobs
+   go mod tidy
+   go run main.go
