@@ -1,0 +1,27 @@
+Go
+
+serpApi 
+
+Async writer
+
+
+
+### PASTA `01-google-jobs/README.md` em inglês:
+
+```markdown
+# 01 - Google Jobs with Go
+
+Search Google Jobs API in real-time using Go and SerpApi.
+
+This example searches for "Golang Developer" roles in Luanda, Lisbon, and Remote.
+
+### What you learn
+
+- How to use `engine=google_jobs`
+- How to filter by `chips`: employment_type (CONTRACTOR, FULLTIME), location, date_posted
+- How to handle pagination
+
+### Run
+
+```bash
+go run main.go -q "Golang Developer" -location "Luanda, Angola"
