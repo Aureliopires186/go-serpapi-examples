@@ -1,0 +1,8 @@
+E o go .mod:
+
+module github.com/seu-usuario/go-serpapi-examples/01-google-jobs
+
+go 1.22
+
+require github.com/serpapi/google-search-results-golang v0.0.0-20240110080014-9b4b9ea42880
+
